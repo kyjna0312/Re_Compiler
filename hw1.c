@@ -1,55 +1,72 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
+#include<string.h>
 
 void get_token();
-int expreesion();
-int term();
-int factor();
+double expreesion();
+double term();
+double factor();
 void error(int i);
 
-int num;
+char buf[100];
+char BUF;
+int i = 0;
+double num;
 enum {Null, NUMBER, PLUS, STAR, LPAREN, RPAREN, END} token;
 
 void get_token(){
-    char ch = getchar();
-
-    if(isdigit(ch)){
-        int number = 0;
-        token = NUMBER;
-        num = number * 10 + ch - '0';
-        printf("number : %d\n", num);
+    if(BUF != '\0'){
+        switch(BUF){
+            case '+' : token = PLUS; break;
+            case '*' : token = STAR; break;
+            case '(' : token = LPAREN; break;
+            case ')' : token = RPAREN; break;
+            case '\n' : token = EOF; break;
+        }
+        BUF = '\0';
     }
     else{
-        switch (ch){
-            case '+': 
-                    token = PLUS;
-                    printf("plus\n");
-                    break;
-            case '*': 
-                    token = STAR;
-                    printf("star\n");
-                    break;
-            case '(':
-                    token = LPAREN;
-                    printf("LPAREN\n");
-                    break;
-            case ')':
-                    token = RPAREN;
-                    printf("RPAREN\n");
-                    break;
-            case '\n':
-                    token = END;
-                    printf("end\n");
-                    break;
-            default :
-                    error(4);
+        char ch = getchar();
+
+        if(isdigit(ch)){
+            //1. 문자열 숫자 저장
+            do{
+                buf[i] = ch;
+                i++;
+                ch = getchar();
+            }while(isdigit(ch));
+
+            //2. 숫자 변환
+            if(strchr(buf, '.')){
+                num = atof(buf);
+                printf("%f\n", num);
+            }
+            else{
+                num = atoi(buf);
+                printf("%f\n", num);
+            }
+
+            //3. 버퍼 초기화
+            BUF = ch;
+            token = NUMBER;
+            buf[0] = '\0';
+            i = 0;
+        }
+        else{
+            switch(ch){
+                case '+' : token = PLUS; break;
+                case '*' : token = STAR; break;
+                case '(' : token = LPAREN; break;
+                case ')' : token = RPAREN; break;
+                case '\n' : token = EOF; break;
+            }   
         }
     }
 }
 
-int expression(){
-    int result;
+double expression(){
+    double result;
     result = term();
 
     while(token == PLUS){
@@ -60,8 +77,8 @@ int expression(){
     return(result);
 }
 
-int term(){
-    int result;
+double term(){
+    double result;
     result = factor();
 
     if(token == STAR){
@@ -72,8 +89,8 @@ int term(){
     return(result);
 }
 
-int factor(){
-    int result;
+double factor(){
+    double result;
 
     if(token ==  NUMBER){
         result = num;
@@ -97,7 +114,7 @@ int factor(){
 }
 
 void main(){
-    int result;
+    double result;
     get_token();
     result = expression();
 
@@ -105,7 +122,7 @@ void main(){
         error(3);
     }
     else{
-        printf("%d\n", result);
+        printf("%lf\n", result);
     }
 }
 
