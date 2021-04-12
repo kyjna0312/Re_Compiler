@@ -22,35 +22,37 @@ void get_token(){
             case '*' : token = STAR; break;
             case '(' : token = LPAREN; break;
             case ')' : token = RPAREN; break;
-            case '\n' : token = EOF; break;
+            case '\n' : token = END; break;
         }
         BUF = '\0';
     }
     else{
         char ch = getchar();
 
-        if(isdigit(ch)){
+        if(isdigit(ch) || ch == '.'){
             //1. 문자열 숫자 저장
             do{
                 buf[i] = ch;
                 i++;
                 ch = getchar();
-            }while(isdigit(ch));
+            }while(isdigit(ch)|| ch == '.');
 
             //2. 숫자 변환
             if(strchr(buf, '.')){
                 num = atof(buf);
-                printf("%f\n", num);
             }
             else{
                 num = atoi(buf);
-                printf("%f\n", num);
             }
 
             //3. 버퍼 초기화
             BUF = ch;
             token = NUMBER;
-            buf[0] = '\0';
+            
+            for(int i=0; i<100; i++){
+                buf[i] = '\0';
+            }
+
             i = 0;
         }
         else{
@@ -59,7 +61,7 @@ void get_token(){
                 case '*' : token = STAR; break;
                 case '(' : token = LPAREN; break;
                 case ')' : token = RPAREN; break;
-                case '\n' : token = EOF; break;
+                case '\n' : token = END; break;
             }   
         }
     }
