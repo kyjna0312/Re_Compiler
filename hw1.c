@@ -101,6 +101,7 @@ double factor(){
     else if (token == LPAREN){
         get_token();
         result = expression();
+
         if(token == RPAREN){
             get_token();
         }
